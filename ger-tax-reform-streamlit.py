@@ -4,7 +4,6 @@ import numpy as np
 import pandas as pd
 
 import streamlit as st
-from streamlit_extras.add_vertical_space import add_vertical_space 
 
 st.write("# Eine einfache Einkommenssteuer")
 

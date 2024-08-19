@@ -2,12 +2,10 @@ import numpy as np
 
 # tax revenue
 
-def reformed_tax_revenue(brutto_values, mass, alpha=5, k=5):
+def reformed_tax_revenue(brutto_values, mass, alpha=5, k=5, M=12000):
 
-    #tax_current = tg.tax_ger_vectorized(brutto_values)
-    #revenue_current = np.dot(tax_current, mass)
-
-    tax_reformed = tax_vectorized(brutto_values, alpha, k)
+    tax_reformed = tax_vectorized(brutto_values, alpha, k, M)
+    #tax_reformed[tax_reformed < 0] = 0 # replace negative by zero b/c we do not account for the state paying a basic income at this point
     revenue_reformed = np.dot(tax_reformed, mass)
 
     return revenue_reformed
@@ -29,19 +27,19 @@ def Gini(values, mass_function): # based on section "discrete probability distri
 
 #new income tax introducing a maximum and minimum net income
 
-M=12*1000. # jährlicher Mindestlohn 
-
-def tax(x, alpha=5, k=5):
+def tax(x, alpha=5, k=5, M=12000):
     if x<=M:
-        return x-M
+        #return x-M
+        return 0
     else:
-        return x-netto(x, alpha, k)
+        return x-netto(x, alpha, k, M)
 
 tax_vectorized = np.vectorize(tax)
 
-def netto(x, alpha=5, k=5):
+def netto(x, alpha=5, k=5, M=12000):
     if x<=M:
-        return M
+        return x
+    #return M
     else:
         return M*(1+(k-1)*np.tanh((x-M)/(alpha*M)))
 
