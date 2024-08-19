@@ -48,7 +48,7 @@ st.line_chart(data, x='brutto', y=['reform','status quo','brutto=netto'], x_labe
 #plt.plot(B/1000, tg.netto_vectorized(B,12.2,10)/1000,label=r"mein Vorschlag", lw=2)
 
 
-B_frame = pd.read_csv('/home/kheidemann/ownCloud/projects/tax-reform/data/verteilung-bruttomonatsverdienste-vollzeitbeschaeftigung-cleansed.csv', sep=',')
+B_frame = pd.read_csv('./data/verteilung-bruttomonatsverdienste-vollzeitbeschaeftigung-cleansed.csv', sep=',')
 B_frame.Mittelwert *= 12 # yearly income not monthly
 B_frame.Anteil *= 0.01 # not in %
 
