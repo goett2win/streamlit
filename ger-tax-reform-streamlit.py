@@ -89,6 +89,6 @@ else:
 
 st.write("### Wer hat mehr / weniger als vorher?")
 
-st.line_chart(data_ger, x='brutto', y=['dtax'], x_label='brutto', y_label='Änderung der jährlichen Steuerlast')
+st.bar_chart(data_ger, x='brutto', y=['dtax'], x_label='brutto', y_label='Änderung der jährlichen Steuerlast')
 
 #st.write("### Zugrundeliegende Brutto-Einkommensverteilung")
