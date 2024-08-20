@@ -1,5 +1,25 @@
 import numpy as np
 
+def find_nearest(array, value):
+    array = np.asarray(array)
+    idx = (np.abs(array - value)).argmin()
+    return idx
+
+def quantile_contributions(weights, values, quantiles):
+    indices = []
+    contributions = []
+    cum_weights = np.cumsum(weights)
+    mean_value = np.dot(weights, values)
+    for q in quantiles:
+        index=(find_nearest(cum_weights,q))
+        indices.append(index)
+    lower = 0
+    for i in indices:
+        upper = i
+        contributions.append(np.dot(weights[lower:upper+1], values[lower:upper+1])/mean_value)
+        lower = i+1
+    return contributions
+
 # tax revenue
 
 def reformed_tax_revenue(brutto_values, mass, alpha=5, k=5, M=12000):
