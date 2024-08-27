@@ -24,7 +24,7 @@ st.write("$n$: Netto-Einkommen, $b$: Brutto-Einkommen, $M$: Steuerfreibetrag")
 st.sidebar.write("**Parameter:**")
 
 g = st.sidebar.slider(r'$\boldsymbol M/12$ (monatlicher Steuerfreibetrag)', value=1500, min_value=400, max_value=2000, step=100)
-k = st.sidebar.slider(r'$\boldsymbol k$ (Verhältnis von Maximaleinkommen zu Steuerfreibetrag)', value=5.0, min_value=1.0, max_value=15.0, step=1.0)
+k = st.sidebar.slider(r'$\boldsymbol k$ (Verhältnis von Maximaleinkommen zu Steuerfreibetrag)', value=5.0, min_value=1.0, max_value=30.0, step=1.0)
 alpha = st.sidebar.slider(r'$\boldsymbol\alpha$ (Skalierungsparameter)', min_value=k-1, max_value=3*k, value=1.5*(k-1), step=0.1)
 
 
@@ -89,12 +89,16 @@ st.bar_chart(data_ger, x='brutto', y=['dtax'], x_label='brutto', y_label='Änder
 quantiles = [0.2, 0.4, 0.6, 0.8, 1.0]
 xlabel = ['0-20%','20-40%','40-60%','60-80%','80-100%']
 contributions = 100*np.array(tg.quantile_contributions(mass, tax_reformed, quantiles))
+contributions_sq = 100*np.array(tg.quantile_contributions(mass, tax_now, quantiles))
+
 contributions_str = [("%0.2f" % c) + "%" for c in contributions]
+contributions_sq_str = [("%0.2f" % c) + "%" for c in contributions_sq]
 quantile_df = pd.DataFrame(
         {
             'Einkommens-Quintil': xlabel,
             #'Quantil': quantiles,
-            'Beitrag zum Steueraufkommen':  contributions_str
+            'Beitrag (reformiert)':  contributions_str,
+            'Beitrag (Status Quo)':  contributions_sq_str
             }
         )
 st.write("### Beiträge zum Steueraufkommen")
@@ -104,7 +108,7 @@ st.write(quantile_df)
 #st.bar_chart(quantile_df, x='Quantil', y='Beitrag')
 
 
-st.write('### Zugrundliegende Brutto-Einkommensverteilung')
+st.write('### Zugrundeliegende Brutto-Einkommensverteilung')
 
 st.markdown("![Foo](https://knut-heidemann.net/img/income-distribution-germany-2023.png)")
 #st.write("### Zugrundeliegende Brutto-Einkommensverteilung")
