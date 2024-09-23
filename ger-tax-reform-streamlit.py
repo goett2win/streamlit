@@ -33,7 +33,7 @@ k = st.sidebar.slider(r'$\boldsymbol k$ (Verhältnis von Maximaleinkommen zu Ste
 alpha = st.sidebar.slider(r'$\boldsymbol\alpha$ (Skalierungsparameter)', min_value=k-1, max_value=3*k, value=1.5*(k-1), step=0.1)
 
 st.sidebar.write("*Reform b:*")
-c = st.sidebar.slider(r'$\boldsymbol c$ (Parameter Max Reform)', min_value=1e4, max_value=20e4, value=89e3, step=1e3)
+c = st.sidebar.slider(r'$\boldsymbol c$', min_value=1e4, max_value=20e4, value=89e3, step=1e3)
 
 M = 12*g
 
@@ -99,7 +99,10 @@ if (rel_rev_change>0):
 else:
     st.sidebar.write("### %0.2f" % rel_rev_change, "%" )
         #print("delta revenue=","%0.2f" % ((revenue-revenue_now)/revenue_now))
-st.sidebar.write("### \+","%0.2f" % rel_rev_change_max, "%", "(Reform B)")
+if (rel_rev_change_max>0):
+    st.sidebar.write("### \+","%0.2f" % rel_rev_change_max, "%", "(Reform B)")
+else:
+    st.sidebar.write("### %0.2f" % rel_rev_change_max, "%", "(Reform B)")
 
 
 st.write("### Wer hat mehr / weniger als vorher?")
