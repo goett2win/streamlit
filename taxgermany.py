@@ -59,7 +59,7 @@ tax_vectorized = np.vectorize(tax)
 def netto(x, alpha=5, k=5, M=12000):
     if x<=M:
         return x
-    #return M
+        #return M
     else:
         return M*(1+(k-1)*np.tanh((x-M)/(alpha*M)))
 
@@ -83,6 +83,30 @@ def grenzsteuersatz(x, alpha=5, k=5):
         return 1-4.0/alpha*(1-np.tanh(z)*np.tanh(z))
 
 grenzsteuersatz_vectorized = np.vectorize(grenzsteuersatz)
+
+
+##################################################################
+# Max Freudenberg's idea of a logarithmic net income function ####
+##################################################################
+
+def netto_max(b, c):#, d, e, M=18000):
+    #return c * np.log(1 + b/c) + d * np.exp(-b/e);
+    return c * np.log(1 + b/c)
+
+netto_max_vectorized = np.vectorize(netto_max)
+
+def tax_max(b, c):
+        return b-netto_max(b, c)
+
+tax_max_vectorized = np.vectorize(tax_max)
+
+def reformed_tax_revenue_max(brutto_values, mass, c):
+
+    tax_reformed = tax_max_vectorized(brutto_values, c)
+    revenue_reformed = np.dot(tax_reformed, mass)
+
+    return revenue_reformed
+##################################################################
 
 ## Function that returns the income tax currently implemented by German law (§32a Einkommensstuertarif)
 #
