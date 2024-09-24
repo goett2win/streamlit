@@ -89,20 +89,24 @@ grenzsteuersatz_vectorized = np.vectorize(grenzsteuersatz)
 # Max Freudenberg's idea of a logarithmic net income function ####
 ##################################################################
 
-def netto_max(b, c):#, d, e, M=18000):
+def netto_max(b, c, M):
+    if b < M:
+        return b 
     #return c * np.log(1 + b/c) + d * np.exp(-b/e);
-    return c * np.log(1 + b/c)
+    else:
+        a = M/np.log(1+M/c)
+        return a * np.log(1 + b/c)
 
 netto_max_vectorized = np.vectorize(netto_max)
 
-def tax_max(b, c):
-        return b-netto_max(b, c)
+def tax_max(b, c, M):
+        return b-netto_max(b, c, M)
 
 tax_max_vectorized = np.vectorize(tax_max)
 
-def reformed_tax_revenue_max(brutto_values, mass, c):
+def reformed_tax_revenue_max(brutto_values, mass, c, M):
 
-    tax_reformed = tax_max_vectorized(brutto_values, c)
+    tax_reformed = tax_max_vectorized(brutto_values, c, M)
     revenue_reformed = np.dot(tax_reformed, mass)
 
     return revenue_reformed

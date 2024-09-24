@@ -6,14 +6,14 @@ import pandas as pd
 import streamlit as st
 
 st.write("# Eine einfache Einkommenssteuer")
-st.write("Version 0.0.4")
+st.write("Version 0.0.5")
 
 st.write('Für Details schaut euch gerne meinen [ Blogeintrag ]( https://knut-heidemann.net/post/tax-reform/ ) an.')
 
 st.write("*Reform a:*")
 st.latex(r'''
 	n(b) \equiv	\begin{cases}
-	b, &\text{für } b<M,\\\
+	b\,, &\text{für } b<M,\\\
 	M \left[1+(k-1)\tanh\left(\frac{b-M}{\alpha M}\right)\right], \alpha \in \mathbb R, &\text{für } b \geq M.
 	\end{cases}''')
 
@@ -21,7 +21,10 @@ st.write("$n$: Netto-Einkommen, $b$: Brutto-Einkommen, $M$: Steuerfreibetrag")
 
 st.write("*Reform b:*")
 st.latex(r'''
-        n(b) = c\,\log(1+b/c)
+        n(b) \equiv \begin{cases}
+        b\,, &\text{für } b<M,\\\ 
+        a\,\log(1+b/c)\,, \quad a = \frac{M}{\log(1+M/c)}\,, &\text{für } b\geq M.
+        \end{cases}
         ''')
 #add_vertical_space(10)
 
@@ -32,16 +35,17 @@ g = st.sidebar.slider(r'$\boldsymbol M/12$ (monatlicher Steuerfreibetrag)', valu
 k = st.sidebar.slider(r'$\boldsymbol k$ (Verhältnis von Maximaleinkommen zu Steuerfreibetrag)', value=5.0, min_value=1.0, max_value=30.0, step=1.0)
 alpha = st.sidebar.slider(r'$\boldsymbol\alpha$ (Skalierungsparameter)', min_value=k-1, max_value=3*k, value=1.5*(k-1), step=0.1)
 
-st.sidebar.write("*Reform b:*")
-c = st.sidebar.slider(r'$\boldsymbol c$', min_value=1e4, max_value=20e4, value=89e3, step=1e3)
-
 M = 12*g
+
+st.sidebar.write("*Reform b:*")
+c = st.sidebar.slider(r'$\boldsymbol c$ (Skalierungsparameter)', min_value=1e4, max_value=20e4, value=2.5*M, step=1e3)
+
 
 B = np.linspace(1,3e5,300)
 N = tg.netto_vectorized(B,alpha,k,M)
 
 N_status_quo = tg.netto_ger_vectorized(B)
-N_max = tg.netto_max_vectorized(B, c)
+N_max = tg.netto_max_vectorized(B, c, M)
 N_linke = tg.netto_linke_vectorized(B)
 
 data = pd.DataFrame(
@@ -69,15 +73,15 @@ mass = B_frame["Anteil"]
 
 netto_now = tg.netto_ger_vectorized(brutto)
 netto_dist = tg.netto_vectorized(brutto, alpha, k, M)
-netto_dist_max = tg.netto_max_vectorized(brutto, c)
+netto_dist_max = tg.netto_max_vectorized(brutto, c, M)
 
 tax_now = tg.tax_ger_vectorized(brutto)
 tax_reformed = tg.tax_vectorized(brutto, alpha, k, M)
-tax_reformed_b = tg.tax_max_vectorized(brutto, c)
+tax_reformed_b = tg.tax_max_vectorized(brutto, c, M)
 
 revenue_now = np.dot(tax_now, mass)
 revenue = tg.reformed_tax_revenue(brutto, mass, alpha, k, M)
-revenue_max = tg.reformed_tax_revenue_max(brutto, mass, c)
+revenue_max = tg.reformed_tax_revenue_max(brutto, mass, c, M)
 rel_rev_change = 100*(revenue-revenue_now)/revenue_now
 rel_rev_change_max = 100*(revenue_max-revenue_now)/revenue_now
 
@@ -97,7 +101,7 @@ st.sidebar.write("**Änderung Steueraufkommen:**")
 if (rel_rev_change>0):
     st.sidebar.write("### \+","%0.2f" % rel_rev_change, "%", "(Reform A)")
 else:
-    st.sidebar.write("### %0.2f" % rel_rev_change, "%" )
+    st.sidebar.write("### %0.2f" % rel_rev_change, "%", "(Reform A)" )
         #print("delta revenue=","%0.2f" % ((revenue-revenue_now)/revenue_now))
 if (rel_rev_change_max>0):
     st.sidebar.write("### \+","%0.2f" % rel_rev_change_max, "%", "(Reform B)")
