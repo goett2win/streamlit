@@ -29,9 +29,10 @@ st.latex(r'''
 #add_vertical_space(10)
 
 st.sidebar.write("**Parameter:**")
+g = st.sidebar.slider(r'$\boldsymbol M/12$ (monatlicher Steuerfreibetrag)', value=1500, min_value=400, max_value=2000, step=100)
+
 st.sidebar.write("*Reform a:*")
 
-g = st.sidebar.slider(r'$\boldsymbol M/12$ (monatlicher Steuerfreibetrag)', value=1500, min_value=400, max_value=2000, step=100)
 k = st.sidebar.slider(r'$\boldsymbol k$ (Verhältnis von Maximaleinkommen zu Steuerfreibetrag)', value=5.0, min_value=1.0, max_value=30.0, step=1.0)
 alpha = st.sidebar.slider(r'$\boldsymbol\alpha$ (Skalierungsparameter)', min_value=k-1, max_value=3*k, value=1.5*(k-1), step=0.1)
 
