@@ -68,12 +68,20 @@ data_tax = pd.DataFrame(
             'Reform b': (B-N_max)/B,
         }
     )
-
 st.write("### Netto vom Brutto")
-st.line_chart(data, x='brutto', y=['Reform a', 'Reform b', 'status quo','brutto=netto'], x_label='brutto', y_label='netto')
+switch = st.radio(
+      "Was soll gezeigt werden?",
+      ["Netto", "Steuersatz"],
+      horizontal = True
+      )
+#on = st.toggle("Durchschnittssteuersatz")
 
-st.write("### Durchschnittssteuersatz")
-st.line_chart(data_tax, x='brutto', y=['Reform a', 'Reform b', 'status quo'], y_label='Durchschnittssteuersatz', x_label='brutto')
+
+if switch == "Steuersatz":
+    #st.write("### Durchschnittssteuersatz")
+    st.line_chart(data_tax, x='brutto', y=['Reform a', 'Reform b', 'status quo'], y_label='Durchschnittssteuersatz', x_label='brutto')
+else:
+    st.line_chart(data, x='brutto', y=['Reform a', 'Reform b', 'status quo','brutto=netto'], x_label='brutto', y_label='netto')
 
 
 B_frame = pd.read_csv('./data/verteilung-bruttomonatsverdienste-vollzeitbeschaeftigung-cleansed.csv', sep=',')
