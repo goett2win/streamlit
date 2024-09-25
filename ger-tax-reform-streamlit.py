@@ -60,9 +60,20 @@ data = pd.DataFrame(
         }
     )
 
+data_tax = pd.DataFrame(
+        {
+            'brutto': B,
+            'Reform a': (B-N)/B,
+            'status quo': (B-N_status_quo)/B,
+            'Reform b': (B-N_max)/B,
+        }
+    )
+
+st.write("### Netto vom Brutto")
 st.line_chart(data, x='brutto', y=['Reform a', 'Reform b', 'status quo','brutto=netto'], x_label='brutto', y_label='netto')
-#st.line_chart(data, x='brutto', y=['reform','status quo','linke','brutto=netto'], x_label='brutto', y_label='netto')
-#plt.plot(B/1000, tg.netto_vectorized(B,12.2,10)/1000,label=r"mein Vorschlag", lw=2)
+
+st.write("### Durchschnittssteuersatz")
+st.line_chart(data_tax, x='brutto', y=['Reform a', 'Reform b', 'status quo'], y_label='Durchschnittssteuersatz', x_label='brutto')
 
 
 B_frame = pd.read_csv('./data/verteilung-bruttomonatsverdienste-vollzeitbeschaeftigung-cleansed.csv', sep=',')
