@@ -6,7 +6,7 @@ import pandas as pd
 import streamlit as st
 
 st.write("# Eine einfache Einkommenssteuer")
-st.write("Version 0.0.5")
+st.write("Version 0.0.6")
 
 st.write('Für Details schaut euch gerne meinen [ Blogeintrag ]( https://knut-heidemann.net/post/tax-reform/ ) an.')
 
@@ -40,6 +40,7 @@ M = 12*g
 
 st.sidebar.write("*Reform b:*")
 c = st.sidebar.slider(r'$\boldsymbol c$ (Skalierungsparameter)', min_value=1e4, max_value=20e4, value=2.5*M, step=1e3)
+a = M/np.log(1+M/c)
 
 
 B = np.linspace(1,3e5,300)
@@ -68,20 +69,30 @@ data_tax = pd.DataFrame(
             'Reform b': (B-N_max)/B,
         }
     )
+
+data_grenz = pd.DataFrame(
+        {
+            'brutto': B,
+            'Reform a': tg.grenzsteuersatz_vectorized(B, alpha, k, M),
+            'status quo': tg.grenz_ger_vectorized(B),
+            'Reform b': tg.grenz_max_vectorized(B, c, M),
+        }
+    )
 st.write("### Netto vom Brutto")
 switch = st.radio(
       "Was soll gezeigt werden?",
-      ["Netto", "Steuersatz"],
+      ["Netto", "Ø-Steuersatz", "Grenzsteuersatz"],
       horizontal = True
       )
 #on = st.toggle("Durchschnittssteuersatz")
 
 
-if switch == "Steuersatz":
-    #st.write("### Durchschnittssteuersatz")
+if switch == "Netto":
+    st.line_chart(data, x='brutto', y=['Reform a', 'Reform b', 'status quo','brutto=netto'], x_label='brutto', y_label='netto')
+elif switch == "Ø-Steuersatz":
     st.line_chart(data_tax, x='brutto', y=['Reform a', 'Reform b', 'status quo'], y_label='Durchschnittssteuersatz', x_label='brutto')
 else:
-    st.line_chart(data, x='brutto', y=['Reform a', 'Reform b', 'status quo','brutto=netto'], x_label='brutto', y_label='netto')
+    st.line_chart(data_grenz, x='brutto', y=['Reform a', 'Reform b', 'status quo'], y_label='Grenzsteuersatz', x_label='brutto')
 
 
 B_frame = pd.read_csv('./data/verteilung-bruttomonatsverdienste-vollzeitbeschaeftigung-cleansed.csv', sep=',')
@@ -162,4 +173,3 @@ st.write(quantile_df)
 st.write('### Zugrundeliegende Brutto-Einkommensverteilung')
 
 st.markdown("![Foo](https://knut-heidemann.net/img/income-distribution-germany-2023.png)")
-#st.write("### Zugrundeliegende Brutto-Einkommensverteilung")

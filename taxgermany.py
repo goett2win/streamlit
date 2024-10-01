@@ -73,7 +73,7 @@ def tax_rate(x, alpha=5, k=5): # Durchschnittssteuersatz
 
 tax_rate_vectorized = np.vectorize(tax_rate)
 
-def grenzsteuersatz(x, alpha=5, k=5):
+def grenzsteuersatz(x, alpha=5, k=5, M=12000):
     z = (x-M)/(alpha*M)
     if x<=M:
         return 0.0
@@ -103,6 +103,15 @@ def tax_max(b, c, M):
         return b-netto_max(b, c, M)
 
 tax_max_vectorized = np.vectorize(tax_max)
+
+def grenz_max(b, c, M):
+    a = M/np.log(1+M/c)
+    if b <= M:
+        return 0.0
+    else:
+        return 1.0-a/(b+c)
+
+grenz_max_vectorized = np.vectorize(grenz_max)
 
 def reformed_tax_revenue_max(brutto_values, mass, c, M):
 
